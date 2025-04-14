@@ -1,0 +1,391 @@
+openapi: 3.0.3
+
+info:
+  title: book_catalogue - OpenAPI 3.0
+  version: 1.0.0
+
+tags:
+  - name: Каталог книг
+    description: Web-приложение каталог книг
+
+paths:
+  /book/{id}:
+    get:
+      tags:
+        - book_catalogue
+      description: Получение информации о книге по id
+      operationId: getBookById
+      parameters:
+        - name: id
+          in: path
+          description: id книги
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookWithAuthorsResponse'
+  /book/name/{name}:
+    get:
+      tags:
+        - book_catalogue
+      description: Получение списка книг по имени
+      operationId: getBooksByName
+      parameters:
+        - name: name
+          in: path
+          description: имя книги
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BookResponse'
+  /book/recent:
+    get:
+      tags:
+        - book_catalogue
+      description: Получение списка последних добавленных книг
+      operationId: getRecentBooks
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BookResponse'
+  /book/page/{pageNumber}:
+    get:
+      tags:
+        - book_catalogue
+      description: Получение списка книг по страницам
+      operationId: getBooksByPage
+      parameters:
+        - name: pageNumber
+          in: path
+          description: номер страницы
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BookResponse'
+  /book:
+    post:
+      tags:
+        - book_catalogue
+      description: Создание карточки книги
+      operationId: createBook
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookRequest'
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookWithAuthorsResponse'
+    put:
+      tags:
+        - book_catalogue
+      description: Изменение карточки книги
+      operationId: updateBook
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookRequest'
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookWithAuthorsResponse'
+  /book/delete/{id}:
+    delete:
+      tags:
+        - book_catalogue
+      description: Удаление карточки книги
+      operationId: deleteBook
+      parameters:
+        - name: id
+          in: path
+          description: id книги
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Успешное удаление
+          content: { }
+  /author/{id}:
+    get:
+      tags:
+        - book_catalogue
+      description: Получение информации об авторе по id
+      operationId: getAuthorById
+      parameters:
+        - name: id
+          in: path
+          description: id автора
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthorWithBooksResponse'
+  /author/{name}:
+    get:
+      tags:
+        - book_catalogue
+      description: Получение списка авторов по имени
+      operationId: getAuthorsByName
+      parameters:
+        - name: name
+          in: path
+          description: имя автора
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AuthorResponse'
+  /author/page/{pageNumber}:
+    get:
+      tags:
+        - book_catalogue
+      description: Получение списка авторов по страницам
+      operationId: getAuthorsByPage
+      parameters:
+        - name: pageNumber
+          in: path
+          description: номер страницы
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AuthorResponse'
+  /author:
+    post:
+      tags:
+        - book_catalogue
+      description: Создание карточки автора
+      operationId: createAuthor
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthorRequest'
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthorResponse'
+    put:
+      tags:
+        - book_catalogue
+      description: Изменение карточки автора
+      operationId: updateAuthor
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthorRequest'
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthorResponse'
+  /author/delete/{id}:
+    delete:
+      tags:
+        - book_catalogue
+      description: Удаление карточки автора
+      operationId: deleteAuthor
+      parameters:
+        - name: id
+          in: path
+          description: id автора
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Успешное удаление
+          content: { }
+
+components:
+  schemas:
+    BookResponse:
+      type: object
+      required:
+        - id
+        - name
+        - description
+        - viewCounter
+      properties:
+        id:
+          description: Id книги
+          type: integer
+          format: int64
+          example: 1
+        name:
+          description: Имя книги
+          type: string
+          example: 'Война и мир'
+        description:
+          description: Описание книги
+          type: string
+          example: 'Мир и война, война никогда не меняется'
+        viewCounter:
+          description: Количество просмотров страницы книги
+          type: integer
+          format: int64
+          example: 1
+    BookRequest:
+      type: object
+      required:
+        - authorId
+        - name
+        - description
+      properties:
+        authorId:
+          type: array
+          items:
+            type: integer
+            format: int64
+            example: 1, 5
+          description: Список Id авторов(-а) книги
+        name:
+          description: Имя книги
+          type: string
+          example: 'Война и мир'
+        description:
+          description: Описание книги
+          type: string
+          example: 'Мир и война, война никогда не меняется'
+    AuthorResponse:
+      type: object
+      required:
+        - id
+        - name
+        - biography
+      properties:
+        id:
+          description: Id автора
+          type: integer
+          format: int64
+          example: 1
+        name:
+          description: Имя автора
+          type: string
+          example: 'Лев Толстой'
+        biography:
+          description: Биография автора
+          type: string
+          example: 'Биография Льва Толстого'
+    AuthorRequest:
+      type: object
+      required:
+        - name
+        - biography
+      properties:
+        name:
+          description: Имя автора
+          type: string
+          example: 'Лев Толстой'
+        biography:
+          description: Биография автора
+          type: string
+          example: 'Биография Льва Толстого'
+    BookAuthorRequest:
+      type: object
+      required:
+        - bookId
+        - authorId
+      properties:
+        bookId:
+          description: Id автора
+          type: integer
+          format: int64
+          example: 1
+        authorId:
+          description: Id автора
+          type: integer
+          format: int64
+          example: 1
+    BookWithAuthorsResponse:
+      type: object
+      required:
+        - bookResponse
+        - bookAuthors
+      properties:
+        bookResponse:
+          $ref: '#/components/schemas/BookResponse'
+        bookAuthors:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuthorResponse'
+    AuthorWithBooksResponse:
+      type: object
+      required:
+        - bookResponse
+        - bookAuthors
+      properties:
+        authorResponse:
+          $ref: '#/components/schemas/AuthorResponse'
+        authorBooks:
+          type: array
+          items:
+            $ref: '#/components/schemas/BookResponse'
