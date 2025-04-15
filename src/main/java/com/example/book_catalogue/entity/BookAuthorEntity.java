@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Getter
 @Setter
@@ -14,6 +16,8 @@ import lombok.Setter;
 @Table(name = "book_authors", schema = "catalogue")
 public class BookAuthorEntity {
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "book_authors_id_gen")
+    @SequenceGenerator(name = "book_authors_id_gen", sequenceName = "catalogue.book_authors_id_seq", allocationSize = 1)
     @Column(name = "id", nullable = false)
     private Long id;
 

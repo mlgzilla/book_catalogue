@@ -16,7 +16,7 @@ public abstract class BookMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "dateAdded", expression = "java(java.time.Instant.now())")
-    @Mapping(target = "viewCounter", expression = "java(0L)")
+    @Mapping(target = "viewCounter", expression = "java(1L)")
     @Mapping(target = "bookAuthorEntities", ignore = true)
     public abstract BookEntity fromBookRequest(BookRequestDto bookRequestDto);
 

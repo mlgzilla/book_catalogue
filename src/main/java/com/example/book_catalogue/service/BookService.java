@@ -3,6 +3,7 @@ package com.example.book_catalogue.service;
 import com.example.book_catalogue.model.BookRequestDto;
 import com.example.book_catalogue.model.BookResponseDto;
 import com.example.book_catalogue.model.BookWithAuthorsResponseDto;
+import com.example.book_catalogue.model.PageRequestDto;
 
 import java.util.List;
 
@@ -16,9 +17,9 @@ public interface BookService {
 
     List<BookResponseDto> getBooksByName(String name);
 
-    List<BookResponseDto> getBooksByPage(Integer pageNumber);
+    Long getBooksCount();
+
+    List<BookResponseDto> getBooksByPage(PageRequestDto pageRequestDto);
 
     List<BookResponseDto> getRecentBooks();
-
-    BookWithAuthorsResponseDto updateBook(BookRequestDto bookRequestDto);
 }

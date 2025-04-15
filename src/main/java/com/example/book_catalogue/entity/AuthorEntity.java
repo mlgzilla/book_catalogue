@@ -28,7 +28,6 @@ public class AuthorEntity {
     @Column(name = "biography", length = 128)
     private String biography;
 
-    @OnDelete(action = OnDeleteAction.CASCADE)
     @OneToMany(mappedBy = "authorEntity", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     protected List<BookAuthorEntity> bookAuthorEntities = new ArrayList<>();
 }

@@ -67,19 +67,32 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/BookResponse'
-  /book/page/{pageNumber}:
+  /book/count:
     get:
+      tags:
+        - book_catalogue
+      description: Получение количества книг
+      operationId: getBooksCount
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int64
+  /book/page:
+    post:
       tags:
         - book_catalogue
       description: Получение списка книг по страницам
       operationId: getBooksByPage
-      parameters:
-        - name: pageNumber
-          in: path
-          description: номер страницы
-          required: true
-          schema:
-            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PageRequest'
       responses:
         200:
           description: successful operation
@@ -95,24 +108,6 @@ paths:
         - book_catalogue
       description: Создание карточки книги
       operationId: createBook
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/BookRequest'
-      responses:
-        200:
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BookWithAuthorsResponse'
-    put:
-      tags:
-        - book_catalogue
-      description: Изменение карточки книги
-      operationId: updateBook
       requestBody:
         required: true
         content:
@@ -187,19 +182,32 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/AuthorResponse'
-  /author/page/{pageNumber}:
+  /author/count:
     get:
+      tags:
+        - book_catalogue
+      description: Получение количества авторов
+      operationId: getAuthorsCount
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int64
+  /author/page:
+    post:
       tags:
         - book_catalogue
       description: Получение списка авторов по страницам
       operationId: getAuthorsByPage
-      parameters:
-        - name: pageNumber
-          in: path
-          description: номер страницы
-          required: true
-          schema:
-            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PageRequest'
       responses:
         200:
           description: successful operation
@@ -238,14 +246,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AuthorRequest'
+              $ref: '#/components/schemas/AuthorUpdateRequest'
       responses:
         200:
           description: successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AuthorResponse'
+                $ref: '#/components/schemas/AuthorWithBooksResponse'
   /author/delete/{id}:
     delete:
       tags:
@@ -315,6 +323,20 @@ components:
           description: Описание книги
           type: string
           example: 'Мир и война, война никогда не меняется'
+    PageRequest:
+      type: object
+      required:
+        - pageNum
+        - pageSize
+      properties:
+        pageNum:
+          description: Номер запрашиваемой страницы
+          type: integer
+          example: 3
+        pageSize:
+          description: Количество карточек на странице
+          type: integer
+          example: 10
     AuthorResponse:
       type: object
       required:
@@ -349,6 +371,26 @@ components:
           description: Биография автора
           type: string
           example: 'Биография Льва Толстого'
+    AuthorUpdateRequest:
+      type: object
+      required:
+        - id
+        - name
+        - biography
+      properties:
+        id:
+          description: Id автора
+          type: integer
+          format: int64
+          example: 1
+        name:
+          description: Имя автора
+          type: string
+          example: 'Лев Толстой'
+        biography:
+          description: Биография автора
+          type: string
+          example: 'Расширенная биография Льва Толстого'
     BookAuthorRequest:
       type: object
       required:

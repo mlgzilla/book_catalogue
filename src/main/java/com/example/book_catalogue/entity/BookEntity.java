@@ -35,7 +35,6 @@ public class BookEntity {
     @Column(name = "date_added", nullable = false)
     private Instant dateAdded;
 
-    @OnDelete(action = OnDeleteAction.CASCADE)
     @OneToMany(mappedBy = "bookEntity", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     protected List<BookAuthorEntity> bookAuthorEntities = new ArrayList<>();
 }

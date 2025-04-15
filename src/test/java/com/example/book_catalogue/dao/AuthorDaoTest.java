@@ -28,14 +28,14 @@ public class AuthorDaoTest extends BookCatalogueApplicationTests {
 //    }
 
     @Test
-    void testGetAllAuthors() {
-        List<AuthorEntity> allBooks = authorDao.getAllAuthors(1, 2);
+    void testGetAuthorsByPage() {
+        List<AuthorEntity> allBooks = authorDao.getAuthorsByPage(1, 2);
         System.out.println(allBooks);
     }
 
     @Test
     void testFindById() {
-        AuthorEntity authorById = authorDao.getAuthorById(2L);
+        AuthorEntity authorById = authorDao.getAuthorById(2L).orElseThrow();
         System.out.println(authorById);
     }
 }

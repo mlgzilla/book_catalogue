@@ -4,6 +4,7 @@ import com.example.book_catalogue.BookApi;
 import com.example.book_catalogue.model.BookRequestDto;
 import com.example.book_catalogue.model.BookResponseDto;
 import com.example.book_catalogue.model.BookWithAuthorsResponseDto;
+import com.example.book_catalogue.model.PageRequestDto;
 import com.example.book_catalogue.service.BookService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -42,8 +43,14 @@ public class BookController implements BookApi {
     }
 
     @Override
-    public ResponseEntity<List<BookResponseDto>> getBooksByPage(Integer pageNumber) {
-        List<BookResponseDto> booksByPage = bookService.getBooksByPage(pageNumber);
+    public ResponseEntity<Long> getBooksCount() {
+        Long booksCount = bookService.getBooksCount();
+        return ResponseEntity.ok(booksCount);
+    }
+
+    @Override
+    public ResponseEntity<List<BookResponseDto>> getBooksByPage(PageRequestDto pageRequestDto) {
+        List<BookResponseDto> booksByPage = bookService.getBooksByPage(pageRequestDto);
         return ResponseEntity.ok(booksByPage);
     }
 
@@ -51,11 +58,5 @@ public class BookController implements BookApi {
     public ResponseEntity<List<BookResponseDto>> getRecentBooks() {
         List<BookResponseDto> recentBooks = bookService.getRecentBooks();
         return ResponseEntity.ok(recentBooks);
-    }
-
-    @Override
-    public ResponseEntity<BookWithAuthorsResponseDto> updateBook(BookRequestDto bookRequestDto) {
-        BookWithAuthorsResponseDto updateBook = bookService.updateBook(bookRequestDto);
-        return ResponseEntity.ok(updateBook);
     }
 }

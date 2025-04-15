@@ -7,9 +7,12 @@ import java.util.List;
 import java.util.Optional;
 
 public interface BookDao {
+
+    Optional<Long> countBooks();
+
     Optional<BookEntity> insertBook(BookEntity book);
 
-    void updateBook(Long id, String name, String description);
+    Optional<BookEntity> updateBook(Long id, String name, String description);
 
     void deleteBook(BookEntity book);
 
@@ -18,4 +21,6 @@ public interface BookDao {
     List<BookEntity> getBookByName(String bookName);
 
     List<BookEntity> getAllBooks(Integer pageNo, Integer pageSize);
+
+    List<BookEntity> getRecentBooks();
 }

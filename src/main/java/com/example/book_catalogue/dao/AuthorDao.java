@@ -3,15 +3,20 @@ package com.example.book_catalogue.dao;
 import com.example.book_catalogue.entity.AuthorEntity;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface AuthorDao {
-    void insertAuthor(AuthorEntity author);
+    Optional<Long> countAuthors();
 
-    void updateAuthor(Long id, String name, String biography);
+    Optional<AuthorEntity> insertAuthor(AuthorEntity author);
+
+    Optional<AuthorEntity> updateAuthor(Long id, String name, String biography);
 
     void deleteAuthor(AuthorEntity author);
 
-    AuthorEntity getAuthorById(Long id);
+    Optional<AuthorEntity> getAuthorById(Long id);
 
-    List<AuthorEntity> getAllAuthors(Integer pageNo, Integer pageSize);
+    List<AuthorEntity> getAuthorsByName(String authorName);
+
+    List<AuthorEntity> getAuthorsByPage(Integer pageNo, Integer pageSize);
 }

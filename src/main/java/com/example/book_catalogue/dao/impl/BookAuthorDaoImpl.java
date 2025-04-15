@@ -32,18 +32,22 @@ public class BookAuthorDaoImpl implements BookAuthorDao {
     @Override
     public void deleteByAuthor(AuthorEntity authorEntity) {
         try (Session session = sessionFactory.openSession()) {
-            session.createQuery("delete from BookAuthorEntity where authorEntity = :authorEntity", BookAuthorEntity.class)
+            Transaction transaction = session.beginTransaction();
+            session.createQuery("delete from BookAuthorEntity where authorEntity = :authorEntity")
                     .setParameter("authorEntity", authorEntity)
                     .executeUpdate();
+            transaction.commit();
         }
     }
 
     @Override
     public void deleteByBook(BookEntity bookEntity) {
         try (Session session = sessionFactory.openSession()) {
-            session.createQuery("delete from BookAuthorEntity where bookEntity = :bookEntity", BookAuthorEntity.class)
+            Transaction transaction = session.beginTransaction();
+            session.createQuery("delete from BookAuthorEntity where bookEntity = :bookEntity")
                     .setParameter("bookEntity", bookEntity)
                     .executeUpdate();
+            transaction.commit();
         }
     }
 

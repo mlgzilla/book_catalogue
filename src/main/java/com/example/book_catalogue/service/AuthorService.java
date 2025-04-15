@@ -1,8 +1,6 @@
 package com.example.book_catalogue.service;
 
-import com.example.book_catalogue.model.AuthorRequestDto;
-import com.example.book_catalogue.model.AuthorResponseDto;
-import com.example.book_catalogue.model.AuthorWithBooksResponseDto;
+import com.example.book_catalogue.model.*;
 
 import java.util.List;
 
@@ -16,7 +14,9 @@ public interface AuthorService {
 
     List<AuthorResponseDto> getAuthorsByName(String name);
 
-    List<AuthorResponseDto> getAuthorsByPage(Integer pageNumber);
+    Long getAuthorsCount();
 
-    AuthorResponseDto updateAuthor(AuthorRequestDto authorRequestDto);
+    List<AuthorResponseDto> getAuthorsByPage(PageRequestDto pageRequestDto);
+
+    AuthorWithBooksResponseDto updateAuthor(AuthorUpdateRequestDto authorUpdateRequestDto);
 }
