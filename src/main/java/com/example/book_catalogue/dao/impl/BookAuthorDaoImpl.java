@@ -4,9 +4,11 @@ import com.example.book_catalogue.dao.BookAuthorDao;
 import com.example.book_catalogue.entity.AuthorEntity;
 import com.example.book_catalogue.entity.BookAuthorEntity;
 import com.example.book_catalogue.entity.BookEntity;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.resource.transaction.spi.TransactionStatus;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -22,32 +24,47 @@ public class BookAuthorDaoImpl implements BookAuthorDao {
 
     @Override
     public void insertBookAuthor(BookAuthorEntity bookAuthorEntity) {
+        Transaction transaction = null;
         try (Session session = sessionFactory.openSession()) {
-            Transaction transaction = session.beginTransaction();
+            transaction = session.beginTransaction();
             session.persist(bookAuthorEntity);
             transaction.commit();
+        } catch (HibernateException e) {
+            if (transaction != null && (transaction.getStatus() == TransactionStatus.ACTIVE || transaction.getStatus() == TransactionStatus.MARKED_ROLLBACK)) {
+                transaction.rollback();
+            }
         }
     }
 
     @Override
     public void deleteByAuthor(AuthorEntity authorEntity) {
+        Transaction transaction = null;
         try (Session session = sessionFactory.openSession()) {
-            Transaction transaction = session.beginTransaction();
+            transaction = session.beginTransaction();
             session.createQuery("delete from BookAuthorEntity where authorEntity = :authorEntity")
                     .setParameter("authorEntity", authorEntity)
                     .executeUpdate();
             transaction.commit();
+        } catch (HibernateException e) {
+            if (transaction != null && (transaction.getStatus() == TransactionStatus.ACTIVE || transaction.getStatus() == TransactionStatus.MARKED_ROLLBACK)) {
+                transaction.rollback();
+            }
         }
     }
 
     @Override
     public void deleteByBook(BookEntity bookEntity) {
+        Transaction transaction = null;
         try (Session session = sessionFactory.openSession()) {
-            Transaction transaction = session.beginTransaction();
+            transaction = session.beginTransaction();
             session.createQuery("delete from BookAuthorEntity where bookEntity = :bookEntity")
                     .setParameter("bookEntity", bookEntity)
                     .executeUpdate();
             transaction.commit();
+        } catch (HibernateException e) {
+            if (transaction != null && (transaction.getStatus() == TransactionStatus.ACTIVE || transaction.getStatus() == TransactionStatus.MARKED_ROLLBACK)) {
+                transaction.rollback();
+            }
         }
     }
 

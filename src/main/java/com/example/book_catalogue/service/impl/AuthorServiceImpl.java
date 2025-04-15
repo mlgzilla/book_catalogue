@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class AuthorServiceImpl implements AuthorService {
 
@@ -30,6 +29,7 @@ public class AuthorServiceImpl implements AuthorService {
     private final ExceptionSupplier exceptionSupplier;
 
     @Override
+    @Transactional
     public AuthorResponseDto createAuthor(AuthorRequestDto authorRequestDto) {
         AuthorEntity authorEntity = authorDao.insertAuthor(authorMapper.fromAuthorRequest(authorRequestDto))
                 .orElseThrow(exceptionSupplier.authorCreationError());
@@ -37,6 +37,7 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
+    @Transactional
     public void deleteAuthor(Long id) {
         AuthorEntity authorEntity = authorDao.getAuthorById(id)
                 .orElseThrow(exceptionSupplier.authorNotFound(id));
@@ -52,6 +53,7 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
+    @Transactional
     public AuthorWithBooksResponseDto getAuthorById(Long id) {
         AuthorEntity authorEntity = authorDao.getAuthorById(id)
                 .orElseThrow(exceptionSupplier.authorNotFound(id));
@@ -63,6 +65,7 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
+    @Transactional
     public List<AuthorResponseDto> getAuthorsByName(String name) {
         List<AuthorEntity> authorsByName = authorDao.getAuthorsByName(name);
         if (authorsByName.isEmpty()) {
@@ -72,12 +75,14 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
+    @Transactional
     public Long getAuthorsCount() {
         return authorDao.countAuthors()
                 .orElseThrow(exceptionSupplier.authorCountError());
     }
 
     @Override
+    @Transactional
     public List<AuthorResponseDto> getAuthorsByPage(PageRequestDto pageRequestDto) {
         List<AuthorEntity> authorsByPage = authorDao.getAuthorsByPage(pageRequestDto.getPageNum(), pageRequestDto.getPageSize());
         if (authorsByPage.isEmpty()) {
@@ -87,6 +92,7 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
+    @Transactional
     public AuthorWithBooksResponseDto updateAuthor(AuthorUpdateRequestDto authorUpdateRequestDto) {
         AuthorEntity updatedtAuthorEntity = authorDao.updateAuthor(authorUpdateRequestDto.getId(),
                         authorUpdateRequestDto.getName(),

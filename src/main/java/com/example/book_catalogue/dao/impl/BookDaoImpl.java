@@ -6,6 +6,7 @@ import org.hibernate.*;
 import org.hibernate.query.Order;
 import org.hibernate.query.SelectionQuery;
 import org.hibernate.query.criteria.*;
+import org.hibernate.resource.transaction.spi.TransactionStatus;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collections;
@@ -39,20 +40,25 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Optional<BookEntity> insertBook(BookEntity book) {
+        Transaction transaction = null;
         try (Session session = sessionFactory.openSession()) {
-            Transaction transaction = session.beginTransaction();
+            transaction = session.beginTransaction();
             session.persist(book);
             transaction.commit();
             return Optional.ofNullable(book);
         } catch (HibernateException e) {
+            if (transaction != null && (transaction.getStatus() == TransactionStatus.ACTIVE || transaction.getStatus() == TransactionStatus.MARKED_ROLLBACK)) {
+                transaction.rollback();
+            }
             return Optional.empty();
         }
     }
 
     @Override
     public Optional<BookEntity> updateBook(Long id, String name, String description) {
+        Transaction transaction = null;
         try (Session session = sessionFactory.openSession()) {
-            Transaction transaction = session.beginTransaction();
+            transaction = session.beginTransaction();
             BookEntity bookEntity = session.get(BookEntity.class, id);
             if (bookEntity == null) {
                 return Optional.empty();
@@ -63,16 +69,24 @@ public class BookDaoImpl implements BookDao {
             transaction.commit();
             return Optional.of(bookEntity);
         } catch (HibernateException e) {
+            if (transaction != null && (transaction.getStatus() == TransactionStatus.ACTIVE || transaction.getStatus() == TransactionStatus.MARKED_ROLLBACK)) {
+                transaction.rollback();
+            }
             return Optional.empty();
         }
     }
 
     @Override
     public void deleteBook(BookEntity book) {
+        Transaction transaction = null;
         try (Session session = sessionFactory.openSession()) {
-            Transaction transaction = session.beginTransaction();
+            transaction = session.beginTransaction();
             session.remove(book);
             transaction.commit();
+        } catch (HibernateException e) {
+            if (transaction != null && (transaction.getStatus() == TransactionStatus.ACTIVE || transaction.getStatus() == TransactionStatus.MARKED_ROLLBACK)) {
+                transaction.rollback();
+            }
         }
     }
 

@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class BookServiceImpl implements BookService {
 
@@ -32,6 +31,7 @@ public class BookServiceImpl implements BookService {
     private final ExceptionSupplier exceptionSupplier;
 
     @Override
+    @Transactional
     public BookWithAuthorsResponseDto createBook(BookRequestDto bookRequestDto) {
         List<Long> authorsId = bookRequestDto.getAuthorId();
         List<AuthorEntity> authorEntities = authorsId.stream()
@@ -47,6 +47,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    @Transactional
     public void deleteBook(Long id) {
         BookEntity book = bookDao.getBookById(id)
                 .orElseThrow(exceptionSupplier.bookNotFound(id));
@@ -56,6 +57,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    @Transactional
     public BookWithAuthorsResponseDto getBookById(Long id) {
         BookEntity bookById = bookDao.getBookById(id)
                 .orElseThrow(exceptionSupplier.bookNotFound(id));
@@ -67,6 +69,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    @Transactional
     public List<BookResponseDto> getBooksByName(String name) {
         List<BookEntity> booksByName = bookDao.getBookByName(name);
         if (booksByName.isEmpty()) {
@@ -76,12 +79,14 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    @Transactional
     public Long getBooksCount() {
         return bookDao.countBooks()
                 .orElseThrow(exceptionSupplier.bookCountError());
     }
 
     @Override
+    @Transactional
     public List<BookResponseDto> getBooksByPage(PageRequestDto pageRequestDto) {
         List<BookEntity> booksByPage = bookDao.getAllBooks(pageRequestDto.getPageNum(), pageRequestDto.getPageSize());
         if (booksByPage.isEmpty()) {
@@ -91,6 +96,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    @Transactional
     public List<BookResponseDto> getRecentBooks() {
         List<BookEntity> recentBooks = bookDao.getRecentBooks();
         if (recentBooks.isEmpty()) {

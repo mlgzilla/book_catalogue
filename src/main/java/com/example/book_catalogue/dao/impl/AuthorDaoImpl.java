@@ -2,7 +2,6 @@ package com.example.book_catalogue.dao.impl;
 
 import com.example.book_catalogue.dao.AuthorDao;
 import com.example.book_catalogue.entity.AuthorEntity;
-import com.example.book_catalogue.entity.BookEntity;
 import jakarta.persistence.criteria.CriteriaQuery;
 import org.hibernate.*;
 import org.hibernate.query.Order;
@@ -11,6 +10,7 @@ import org.hibernate.query.criteria.HibernateCriteriaBuilder;
 import org.hibernate.query.criteria.JpaCriteriaQuery;
 import org.hibernate.query.criteria.JpaPredicate;
 import org.hibernate.query.criteria.JpaRoot;
+import org.hibernate.resource.transaction.spi.TransactionStatus;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collections;
@@ -25,7 +25,6 @@ public class AuthorDaoImpl implements AuthorDao {
     public AuthorDaoImpl(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
-
 
     @Override
     public Optional<Long> countAuthors() {
@@ -42,40 +41,53 @@ public class AuthorDaoImpl implements AuthorDao {
 
     @Override
     public Optional<AuthorEntity> insertAuthor(AuthorEntity author) {
+        Transaction transaction = null;
         try (Session session = sessionFactory.openSession()) {
-            Transaction transaction = session.beginTransaction();
+            transaction = session.beginTransaction();
             session.persist(author);
             transaction.commit();
             return Optional.of(author);
         } catch (HibernateException e) {
+            if (transaction != null && (transaction.getStatus() == TransactionStatus.ACTIVE || transaction.getStatus() == TransactionStatus.MARKED_ROLLBACK)) {
+                transaction.rollback();
+            }
             return Optional.empty();
         }
     }
 
     @Override
     public Optional<AuthorEntity> updateAuthor(Long id, String name, String biography) {
+        Transaction transaction = null;
         try (Session session = sessionFactory.openSession()) {
-            Transaction transaction = session.beginTransaction();
-            AuthorEntity authorEntity = session.get(AuthorEntity.class, id);
+            transaction = session.beginTransaction();
+            AuthorEntity authorEntity = session.get(AuthorEntity.class, id, LockMode.PESSIMISTIC_WRITE);
             if (authorEntity == null) {
                 return Optional.empty();
             }
             authorEntity.setName(name);
-            authorEntity.setName(biography);
+            authorEntity.setBiography(biography);
             session.merge(authorEntity);
             transaction.commit();
             return Optional.of(authorEntity);
         } catch (HibernateException e) {
+            if (transaction != null && (transaction.getStatus() == TransactionStatus.ACTIVE || transaction.getStatus() == TransactionStatus.MARKED_ROLLBACK)) {
+                transaction.rollback();
+            }
             return Optional.empty();
         }
     }
 
     @Override
     public void deleteAuthor(AuthorEntity author) {
+        Transaction transaction = null;
         try (Session session = sessionFactory.openSession()) {
-            Transaction transaction = session.beginTransaction();
+            transaction = session.beginTransaction();
             session.remove(author);
             transaction.commit();
+        } catch (HibernateException e) {
+            if (transaction != null && (transaction.getStatus() == TransactionStatus.ACTIVE || transaction.getStatus() == TransactionStatus.MARKED_ROLLBACK)) {
+                transaction.rollback();
+            }
         }
     }
 
@@ -83,7 +95,7 @@ public class AuthorDaoImpl implements AuthorDao {
     public Optional<AuthorEntity> getAuthorById(Long id) {
         try (Session session = sessionFactory.openSession()) {
             Transaction transaction = session.beginTransaction();
-            AuthorEntity authorEntity = session.get(AuthorEntity.class, id, LockMode.READ);
+            AuthorEntity authorEntity = session.get(AuthorEntity.class, id, LockMode.PESSIMISTIC_READ);
             if (authorEntity == null) {
                 return Optional.empty();
             }
